@@ -119,7 +119,6 @@ button {
 <body>
 <div class="container">
   <div class="progress" id="progress"></div>
-  <!-- Änderung 1: Formular mit GET-Methode und target -->
   <form id="surveyForm" method="GET" 
         action="https://script.google.com/macros/s/AKfycbxdy74gdK1TPjtfUqSEARKnD82pnNGjuCfKJ3ZBQo7gdXoc8ioWrPq5HZWk-oiJ0mLTEA/exec"
         target="hiddenFrame">
@@ -213,8 +212,7 @@ button {
       </div>
     </div>
   </form>
-  <!-- Änderung 2: Unsichtbarer iframe für Formular-Submit -->
-  <iframe name="hiddenFrame" style="display:none"></iframe>
+  <iframe name="hiddenFrame" style="display:none" onload="showThankYou()"></iframe>
   <div id="thankYou">
     <h2>🎉 Danke für Ihre Teilnahme! 🎉</h2>
   </div>
@@ -275,7 +273,24 @@ function prevStep() {
   }
 }
 
-// Änderung 3: Formular-Submit-Handler
+// Funktion zur Anzeige der Dankesnachricht
+function showThankYou() {
+  setTimeout(() => {
+    form.style.display = 'none';
+    progress.style.display = 'none';
+    thankYou.style.display = 'block';
+    window.scrollTo(0, 0);
+  }, 500);
+}
+
+// Event-Listener für Nachrichten vom iframe
+window.addEventListener('message', function(e) {
+  if (e.data === 'formSubmitted') {
+    showThankYou();
+  }
+});
+
+// Formular-Submit-Handler
 form.addEventListener('submit', function(e) {
   // Checkbox-Werte als kommagetrennte Zeichenkette
   const checkboxes = form.querySelectorAll('input[name="grund"]:checked');
@@ -287,13 +302,6 @@ form.addEventListener('submit', function(e) {
   hiddenInput.name = 'grund';
   hiddenInput.value = grundValues;
   form.appendChild(hiddenInput);
-  
-  // Danke-Seite nach Submit anzeigen (wird durch iframe-Load ausgelöst)
-  document.querySelector('iframe[name="hiddenFrame"]').onload = function() {
-    form.style.display = 'none';
-    progress.style.display = 'none';
-    thankYou.style.display = 'block';
-  };
 });
 </script>
 </body>
