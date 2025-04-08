@@ -120,7 +120,7 @@ button {
 <div class="container">
   <div class="progress" id="progress"></div>
   <form id="surveyForm" method="GET" 
-        action="https://script.google.com/macros/s/AKfycbzkUmfN32Qb0uInFARL6zhBbNRDTMAJMy006UZzqGvvdH6nHmTEBKTjb6WvpnNdKiLNGQ/exec"
+        action="https://script.google.com/macros/s/AKfycby0H-is_mTeZzzDKf3_tHIlsliCO-QLVVZydmg-kdMgytI69ZGptem9MIjV4bmZBPu3Vg/exec"
         target="hiddenFrame">
     <div class="step active">
       <h2>1. An welcher Hochschule/Universität studierst du?</h2>
@@ -297,14 +297,19 @@ form.addEventListener('submit', function(e) {
   hiddenInput.name = 'gruende';
   hiddenInput.value = selectedReasons.join(', ');
   
-  // Entferne vorhandenes verstecktes Feld (falls vorhanden)
-  const existingHidden = form.querySelector('input[name="gruende"]');
-  if (existingHidden) {
-    form.removeChild(existingHidden);
-  }
+  // Erstelle verstecktes Feld für andere Gründe (auch wenn leer)
+  const andereInput = document.createElement('input');
+  andereInput.type = 'hidden';
+  andereInput.name = 'andere_gruende';
+  andereInput.value = form.grund_andere.value || '';
   
-  // Füge neues Feld hinzu
+  // Entferne vorhandene versteckte Felder
+  const existingHidden = form.querySelectorAll('input[name="gruende"], input[name="andere_gruende"]');
+  existingHidden.forEach(el => form.removeChild(el));
+  
+  // Füge neue Felder hinzu
   form.appendChild(hiddenInput);
+  form.appendChild(andereInput);
 });
 
 // Fallback für Dankesnachricht
